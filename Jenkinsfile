@@ -98,7 +98,7 @@ pipeline {
         }
     }
 
-    post {
+    // post {
         // always {
         //     deleteDir()
         // }
@@ -108,5 +108,5 @@ pipeline {
         //          subject: "[Familia][DevOps] Failed ${PROJECT}",
         //          body: "Error en el proyecto ${env.BUILD_URL}"
         // }
-    }
+    // }
 }
