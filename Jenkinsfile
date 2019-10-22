@@ -40,15 +40,11 @@ pipeline {
                 script {
                     if (env.BRANCH_NAME == "master") {
                         env.AWS_BUCKET_S3 = "s3://prod-${PROJECT}"
-                        env.AWS_CDN_DISTRIBUTION = "${AWS_CDN_DISTRIBUTION_NOL_PDN}"
+                        env.AWS_CDN_DISTRIBUTION = "${AWS_CDN_DISTRIBUTION_PDN}"
                         env.AWS_CREDENTIALS_ID = "${AWS_CREDENTIALS_PDN}"
-                    } else if (env.BRANCH_NAME == "staging") {
-                        env.AWS_BUCKET_S3 = "s3://stg-${PROJECT}"
-                        env.AWS_CDN_DISTRIBUTION = "${AWS_CDN_DISTRIBUTION_NOL_STG}"
-                        env.AWS_CREDENTIALS_ID = "${AWS_CREDENTIALS_DEV}"
                     } else if (env.BRANCH_NAME == "develop") {
                         env.AWS_BUCKET_S3 = "s3://dev-${PROJECT}"
-                        env.AWS_CDN_DISTRIBUTION = "${AWS_CDN_DISTRIBUTION_NOL_DEV}"
+                        env.AWS_CDN_DISTRIBUTION = "${AWS_CDN_DISTRIBUTION_DEV}"
                         env.AWS_CREDENTIALS_ID = "${AWS_CREDENTIALS_DEV}"
                     }
                 }
@@ -73,7 +69,7 @@ pipeline {
         }
         stage('npm build') {
             steps {
-                sh 'gatsby build --prefix-paths'
+                sh 'gatsby build'
             }
         }
         stage("SonarQube analysis") {
@@ -89,7 +85,7 @@ pipeline {
         stage('S3') {
             steps {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${AWS_CREDENTIALS_ID}", accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
-                    sh "aws s3 sync ./public/ ${AWS_BUCKET_S3}/nuestro-mundo/horoscopo --delete"
+                    sh "aws s3 sync ./public/ ${AWS_BUCKET_S3} --delete"
                 }
             }
         }
@@ -103,14 +99,14 @@ pipeline {
     }
 
     post {
-        always {
-            deleteDir()
-        }
+        // always {
+        //     deleteDir()
+        // }
 
-        failure {
-            mail to: "${EMAIL_DEVELOPERS}",
-                 subject: "[Familia][DevOps] Failed ${PROJECT}",
-                 body: "Error en el proyecto ${env.BUILD_URL}"
-        }
+        // failure {
+        //     mail to: "${EMAIL_DEVELOPERS}",
+        //          subject: "[Familia][DevOps] Failed ${PROJECT}",
+        //          body: "Error en el proyecto ${env.BUILD_URL}"
+        // }
     }
 }
