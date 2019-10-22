@@ -65,5 +65,5 @@ public
 
 # secrets
 .contentful.json
-.env*
 !.env.example
+/package-lock.json
