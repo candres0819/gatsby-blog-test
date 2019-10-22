@@ -72,16 +72,16 @@ pipeline {
                 sh 'gatsby build'
             }
         }
-        stage("SonarQube analysis") {
-            steps {
-                echo "[EXEC] - Analisis estatico de codigo"
-                script {
-                    withSonarQubeEnv("${SONAR_SERVER}") {
-                        sh "${SONAR_TOOL}/bin/sonar-scanner -Dsonar.projectKey=${PROJECT} -Dsonar.projectName=${PROJECT}"
-                    }
-                }
-            }
-        }
+        // stage("SonarQube analysis") {
+        //     steps {
+        //         echo "[EXEC] - Analisis estatico de codigo"
+        //         script {
+        //             withSonarQubeEnv("${SONAR_SERVER}") {
+        //                 sh "${SONAR_TOOL}/bin/sonar-scanner -Dsonar.projectKey=${PROJECT} -Dsonar.projectName=${PROJECT}"
+        //             }
+        //         }
+        //     }
+        // }
         stage('S3') {
             steps {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${AWS_CREDENTIALS_ID}", accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
